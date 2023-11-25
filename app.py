@@ -51,6 +51,10 @@ def main():
     if st.sidebar.button("Remove from Team"):
         remove_from_team(dragged_person, selected_events, target_team)
 
+    # Reset All
+    if st.sidebar.button("Reset All"):
+        reset_all()
+
 def input_people_data():
     st.sidebar.subheader("Add People and Events")
 
@@ -112,7 +116,11 @@ def remove_from_team(dragged_person, selected_events, target_team):
                         st.sidebar.success(f"{dragged_person} removed from {eventss} in Team B.")
                         st.session_state.team_b_counter -= 1
 
-
+def reset_all():
+    st.session_state.team_a_table, st.session_state.team_b_table = initialize_tables()
+    st.session_state.team_a_counter = 0
+    st.session_state.team_b_counter = 0
+    st.sidebar.success("All tables and counters have been reset.")
 
 if __name__ == "__main__":
     main()
