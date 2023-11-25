@@ -38,13 +38,15 @@ def input_people_data():
     st.sidebar.subheader("Add People and Events")
 
     people_data = {}
+    person_counter = 0
 
     while True:
-        person_name = st.sidebar.text_input("Person Name:")
+        person_counter += 1
+        person_name = st.sidebar.text_input(f"Person {person_counter} Name:")
         if not person_name:
             break
 
-        events = st.sidebar.text_input("Events (comma-separated):").split(",")
+        events = st.sidebar.text_input(f"Events for {person_name} (comma-separated):").split(",")
         people_data[person_name] = [event.strip() for event in events]
 
     return people_data
