@@ -68,16 +68,25 @@ def input_people_data():
         events = st.sidebar.multiselect(f"Events for {person_name}:", EVENTS)
         st.session_state.people_data[person_name] = events
 
-def assign_to_table(person, selected_event, team_table, team_counter):
+def assign_to_table(person, selected_event, team_table, team_counter, people_data):
     for spot in ["Spot 1", "Spot 2"]:
         if pd.isna(team_table.loc[selected_event, spot]):
-            team_table.loc[selected_event, spot] = person
-            st.sidebar.success(f"{person} assigned to {selected_event} in {spot} for the team.")
-            return
+            if person not in team_table.values:
+                team_table.loc[selected_event, spot] = person
+                update_assigned_events(person, selected_event, people_data)
+                table_slot = st.empty()
+                table_slot.table(team_table)
+                st.sidebar.success(f"{person} assigned to {selected_event} in {spot} for the team.")
+                return
+            else:
+                st.sidebar.error(f"{person} is already assigned to an event.")
+                return
     st.sidebar.error(f"No available slots for {person} in {selected_event}.")
 
-    # Replace N/A with an empty string
-    team_table.replace({pd.NA: ''}, inplace=True)
+def update_assigned_events(person, selected_event, people_data):
+    if person in people_data:
+        people_data[person].remove(selected_event)
+
 
 
 def assign_to_team(person, target_team, selected_events):
