@@ -76,6 +76,10 @@ def assign_to_table(person, selected_event, team_table, team_counter):
             return
     st.sidebar.error(f"No available slots for {person} in {selected_event}.")
 
+    # Replace N/A with an empty string
+    team_table.replace({pd.NA: ''}, inplace=True)
+
+
 def assign_to_team(person, target_team, selected_events):
     if target_team == "Team A" and st.session_state.team_a_counter < 15:
         for eventss in selected_events:
