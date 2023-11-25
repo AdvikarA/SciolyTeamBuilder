@@ -29,11 +29,11 @@ def main():
     # Drag and Drop
     dragged_person = st.sidebar.selectbox("Drag a person to a team:", [""] + list(people_data.keys()))
     target_team = st.sidebar.selectbox("Select Team:", ["", "Team A", "Team B"])
+    selected_event = st.sidebar.selectbox("Select Event:", [""] + EVENTS)
 
     if st.sidebar.button("Assign to Team"):
-        if dragged_person and target_team:
-            assigned_events = select_events(people_data[dragged_person])
-            assign_to_team(dragged_person, target_team, assigned_events, team_a_table, team_b_table, team_a_counter, team_b_counter, people_data)
+        if dragged_person and target_team and selected_event:
+            assign_to_team(dragged_person, target_team, selected_event, team_a_table, team_b_table, team_a_counter, team_b_counter, people_data)
 
 def input_people_data():
     st.sidebar.subheader("Add People and Events")
@@ -60,23 +60,22 @@ def initialize_tables():
 def initialize_counters():
     return 0, 0
 
-def select_events(events):
-    return st.sidebar.multiselect("Select events for this person:", events)
-
-def assign_to_team(person, target_team, assigned_events, team_a_table, team_b_table, team_a_counter, team_b_counter, people_data):
+def assign_to_team(person, target_team, selected_event, team_a_table, team_b_table, team_a_counter, team_b_counter, people_data):
     if target_team == "Team A" and team_a_counter < 15:
-        assign_to_table(person, assigned_events, team_a_table, team_a_counter, people_data)
+        assign_to_table(person, selected_event, team_a_table, team_a_counter, people_data)
         team_a_counter += 1
     elif target_team == "Team B" and team_b_counter < 15:
-        assign_to_table(person, assigned_events, team_b_table, team_b_counter, people_data)
+        assign_to_table(person, selected_event, team_b_table, team_b_counter, people_data)
         team_b_counter += 1
 
-def assign_to_table(person, assigned_events, team_table, team_counter, people_data):
-    for i, event in enumerate(assigned_events):
-        if team_table.iloc[team_counter * 2, i] == "":
-            team_table.iloc[team_counter * 2, i] = f"{person} ({event})"
-        elif team_table.iloc[team_counter * 2 + 1, i] == "":
-            team_table.iloc[team_counter * 2 + 1, i] = f"{person} ({event})"
+def assign_to_table(person, selected_event, team_table, team_counter, people_data):
+    for i in range(2):
+        if team_table.iloc[team_counter * 2 + i, 0] == "":
+            team_table.iloc[team_counter * 2 + i, 0] = f"{person} ({selected_event})"
+            break
+        elif team_table.iloc[team_counter * 2 + i, 1] == "":
+            team_table.iloc[team_counter * 2 + i, 1] = f"{person} ({selected_event})"
+            break
 
 if __name__ == "__main__":
     main()
