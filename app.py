@@ -57,8 +57,8 @@ def input_people_data():
     return people_data
 
 def initialize_tables():
-    team_a_table = pd.DataFrame(index=range(23), columns=EVENTS)
-    team_b_table = pd.DataFrame(index=range(23), columns=EVENTS)
+    team_a_table = pd.DataFrame(index=EVENTS, columns=["Spot 1", "Spot 2"])
+    team_b_table = pd.DataFrame(index=EVENTS, columns=["Spot 1", "Spot 2"])
     return team_a_table, team_b_table
 
 def initialize_counters():
@@ -66,12 +66,12 @@ def initialize_counters():
 
 def assign_to_table(person, selected_events, team_table, team_counter, people_data):
     for event in selected_events:
-        if team_table.loc[team_counter, event] is pd.NA:
-            team_table.loc[team_counter, event] = person
-            st.sidebar.success(f"{person} assigned to {event} in the team.")
-            break
-    else:
-        st.sidebar.error(f"No available slots for {person} in the selected events.")
+        for spot in ["Spot 1", "Spot 2"]:
+            if pd.isna(team_table.loc[event, spot]):
+                team_table.loc[event, spot] = person
+                st.sidebar.success(f"{person} assigned to {event} in {spot} for the team.")
+                return
+    st.sidebar.error(f"No available slots for {person} in the selected events.")
 
 def assign_to_team(person, target_team, selected_events, team_a_table, team_b_table, team_a_counter, team_b_counter, people_data):
     if target_team == "Team A" and team_a_counter < 15:
