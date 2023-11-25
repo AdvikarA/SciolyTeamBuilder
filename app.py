@@ -71,7 +71,8 @@ def assign_to_table(person, selected_event, team_table, team_counter, people_dat
     for spot in ["Spot 1", "Spot 2"]:
         if pd.isna(team_table.loc[selected_event, spot]):
             team_table.loc[selected_event, spot] = person
-            st.table(team_table, key=f"{selected_event}_{spot}")  # Use a unique key for the table
+            table_slot = st.empty()
+            table_slot.table(team_table)
             st.sidebar.success(f"{person} assigned to {selected_event} in {spot} for the team.")
             return
     st.sidebar.error(f"No available slots for {person} in {selected_event}.")
