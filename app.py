@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import streamlit.components.v1 as components
 
 EVENTS = ["Air trajectory", "ANP", "Astro", "Chem Lab", "Codes", "Detector", "Disease", "DP", "Ecology",
           "Expdes", "Fermi", "Flight", "4n6", "Forestry", "Fossils", "Geomapping", "Microbe", "Robot Tour",
@@ -30,10 +29,10 @@ def main():
 
     # Display tables
     st.header("Team A")
-    display_table(st.session_state.team_a_table, "Team A")
+    st.table(st.session_state.team_a_table)
 
     st.header("Team B")
-    display_table(st.session_state.team_b_table, "Team B")
+    st.table(st.session_state.team_b_table)
 
     # Display counters
     st.sidebar.header("Team Counters")
@@ -82,39 +81,6 @@ def assign_to_team(person, target_team, selected_events):
         for eventss in selected_events:
             assign_to_table(person, eventss, st.session_state.team_b_table, st.session_state.team_b_counter)
         st.session_state.team_b_counter += 1
-
-def display_table(team_table, team_name):
-    table_html = generate_table_html(team_table, team_name)
-    components.html(table_html, height=400, scrolling=True)
-
-def generate_table_html(team_table, team_name):
-    table_style = f"""
-        <style>
-            table {{
-                font-size: 16px;
-                border-collapse: collapse;
-                width: 100%;
-                margin-bottom: 20px;
-                overflow: hidden;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                border-radius: 5px;
-                background-color: #f8f9fa;
-            }}
-            th, td {{
-                padding: 15px;
-                text-align: center;
-                border: 1px solid #dee2e6;
-                background-color: #ffffff;
-            }}
-            th {{
-                background-color: #343a40;
-                color: #ffffff;
-            }}
-        </style>
-    """
-    table_html = team_table.to_html(classes='table')
-    table_html = table_html.replace('<table border="1" class="dataframe table">', f'<table class="table">{table_style}')
-    return f"<h3 style='color: #343a40;'>{team_name}</h3>{table_html}"
 
 if __name__ == "__main__":
     main()
