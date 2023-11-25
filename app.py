@@ -77,3 +77,6 @@ def assign_to_table(person, assigned_events, team_table, team_counter, people_da
             team_table.iloc[team_counter * 2, i] = f"{person} ({event})"
         elif team_table.iloc[team_counter * 2 + 1, i] == "":
             team_table.iloc[team_counter * 2 + 1, i] = f"{person} ({event})"
+
+if __name__ == "__main__":
+    main()
