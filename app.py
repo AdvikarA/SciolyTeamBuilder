@@ -57,8 +57,8 @@ def input_people_data():
     return people_data
 
 def initialize_tables():
-    team_a_table = pd.DataFrame(index=range(len(EVENTS) * 2), columns=EVENTS)
-    team_b_table = pd.DataFrame(index=range(len(EVENTS) * 2), columns=EVENTS)
+    team_a_table = pd.DataFrame(index=range(len(EVENTS) * 2 - 1), columns=EVENTS)
+    team_b_table = pd.DataFrame(index=range(len(EVENTS) * 2 - 1), columns=EVENTS)
     return team_a_table, team_b_table
 
 def initialize_counters():
@@ -73,8 +73,10 @@ def assign_to_team(person, target_team, selected_event, team_a_table, team_b_tab
         team_b_counter += 1
 
 def assign_to_table(person, selected_event, team_table, team_counter, people_data):
+    event_index = EVENTS.index(selected_event)
     team_table.loc[team_counter * 2, selected_event] = person
-    team_table.loc[team_counter * 2 + 1, selected_event] = person
+    team_table.loc[team_counter * 2 + 1, selected_event] = f"({people_data[person][event_index]})"
+    people_data[person][event_index] = "Assigned"
 
 if __name__ == "__main__":
     main()
