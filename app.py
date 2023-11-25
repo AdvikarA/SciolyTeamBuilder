@@ -26,10 +26,10 @@ def main():
 
     # Display tables
     st.header("Team A")
-    st.table(st.session_state.team_a_table)
+    st.table(st.session_state.team_a_table.applymap(lambda x: x if pd.isna(x) else f"{x}\n--------" if len(str(x).split("\n")) < 3 else x))
 
     st.header("Team B")
-    st.table(st.session_state.team_b_table)
+    st.table(st.session_state.team_b_table.applymap(lambda x: x if pd.isna(x) else f"{x}\n--------" if len(str(x).split("\n")) < 3 else x))
 
     # Display counters
     st.sidebar.header("Team Counters")
