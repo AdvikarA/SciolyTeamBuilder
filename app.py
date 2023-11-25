@@ -51,6 +51,10 @@ def main():
     if st.sidebar.button("Remove from Team"):
         remove_from_team(dragged_person, selected_events, target_team)
 
+    # Reset All
+    if st.sidebar.button("Reset All"):
+        reset_all()
+
 def input_people_data():
     st.sidebar.subheader("Add People and Events")
 
@@ -76,11 +80,6 @@ def initialize_tables():
 def assign_to_table(person, selected_event, team_table, team_counter):
     num_slots = team_table.shape[1]
 
-    # Check if there are already two people assigned
-    if num_slots == 2 and not team_table.loc[selected_event].isna().any() and selected_event not in ["Expdes", "Codes"]:
-        st.sidebar.error(f"Cannot assign more than two people to {selected_event}.")
-        return
-
     for slot in range(num_slots):
         if pd.isna(team_table.loc[selected_event, slot]):
             team_table.loc[selected_event, slot] = person
@@ -103,12 +102,25 @@ def remove_from_team(dragged_person, selected_events, target_team):
     if dragged_person:
         if target_team == "Team A" and st.session_state.team_a_counter > 0:
             for eventss in selected_events:
-                assign_to_table("", eventss, st.session_state.team_a_table, st.session_state.team_a_counter)
-            st.session_state.team_a_counter -= 1
+                for slot in range(st.session_state.team_a_table.shape[1]):
+                    if st.session_state.team_a_table.loc[eventss, slot] == dragged_person:
+                        st.session_state.team_a_table.loc[eventss, slot] = pd.NA
+                        st.sidebar.success(f"{dragged_person} removed from {eventss} in Team A.")
+                        st.session_state.team_a_counter -= 1
+
         elif target_team == "Team B" and st.session_state.team_b_counter > 0:
             for eventss in selected_events:
-                assign_to_table("", eventss, st.session_state.team_b_table, st.session_state.team_b_counter)
-            st.session_state.team_b_counter -= 1
+                for slot in range(st.session_state.team_b_table.shape[1]):
+                    if st.session_state.team_b_table.loc[eventss, slot] == dragged_person:
+                        st.session_state.team_b_table.loc[eventss, slot] = pd.NA
+                        st.sidebar.success(f"{dragged_person} removed from {eventss} in Team B.")
+                        st.session_state.team_b_counter -= 1
+
+def reset_all():
+    st.session_state.team_a_table, st.session_state.team_b_table = initialize_tables()
+    st.session_state.team_a_counter = 0
+    st.session_state.team_b_counter = 0
+    st.sidebar.success("All tables and counters have been reset.")
 
 if __name__ == "__main__":
     main()
