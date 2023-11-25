@@ -74,11 +74,13 @@ def assign_to_table(person, selected_event, people_data):
             st.sidebar.success(f"{person} assigned to {selected_event} in {spot} for the team.")
             
             # Update the table in the session state
-            st.session_state.team_a_table if target_team == "Team A" else st.session_state.team_b_table = target_team_table
+            if target_team == "Team A":
+                st.session_state.team_a_table = target_team_table
+            else:
+                st.session_state.team_b_table = target_team_table
             
             return
     st.sidebar.error(f"No available slots for {person} in {selected_event}.")
-
 def assign_to_team(person, target_team, selected_events, people_data):
     if target_team == "Team A" and team_a_counter < 15:
         for eventss in selected_events:      
