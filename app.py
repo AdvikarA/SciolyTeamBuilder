@@ -95,14 +95,26 @@ def assign_to_table(person, selected_event, team_table, team_counter):
 
 
 def assign_to_team(person, target_team, selected_events):
-    if target_team == "Team A" and st.session_state.team_a_counter < 15:
-        for eventss in selected_events:
-            assign_to_table(person, eventss, st.session_state.team_a_table, st.session_state.team_a_counter)
-        st.session_state.team_a_counter += 1
-    elif target_team == "Team B" and st.session_state.team_b_counter < 15:
-        for eventss in selected_events:
-            assign_to_table(person, eventss, st.session_state.team_b_table, st.session_state.team_b_counter)
-        st.session_state.team_b_counter += 1
+    for eventss in selected_events:
+        if (
+            (eventss not in ["Expdes", "Codes"])
+            and (st.session_state.team_a_table[eventss].apply(lambda x: not pd.isna(x)).sum() == 2)
+        ):
+            st.sidebar.error(f"Cannot assign more than two people to {eventss}.")
+            continue
+
+        assign_to_table(
+            person,
+            eventss,
+            st.session_state.team_a_table if target_team == "Team A" else st.session_state.team_b_table,
+            st.session_state.team_a_counter if target_team == "Team A" else st.session_state.team_b_counter,
+        )
+
+        if target_team == "Team A":
+            st.session_state.team_a_counter += 1
+        else:
+            st.session_state.team_b_counter += 1
+
 
 def remove_from_team(dragged_person, selected_events, target_team):
     if dragged_person:
