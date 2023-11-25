@@ -12,10 +12,7 @@ def main():
         st.session_state.people_data = {}
 
     if 'team_a_table' not in st.session_state:
-        st.session_state.team_a_table = pd.DataFrame(index=EVENTS, columns=["Spot 1", "Spot 2"])
-
-    if 'team_b_table' not in st.session_state:
-        st.session_state.team_b_table = pd.DataFrame(index=EVENTS, columns=["Spot 1", "Spot 2"])
+        st.session_state.team_a_table, st.session_state.team_b_table = initialize_tables()
 
     if 'team_a_counter' not in st.session_state:
         st.session_state.team_a_counter = 0
@@ -68,17 +65,24 @@ def input_people_data():
         events = st.sidebar.multiselect(f"Events for {person_name}:", EVENTS)
         st.session_state.people_data[person_name] = events
 
+def initialize_tables():
+    num_slots = {event: 3 if event in ["Expdes", "Codes"] else 2 for event in EVENTS}
+
+    team_a_table = pd.DataFrame(index=EVENTS, columns=range(max(num_slots.values())))
+    team_b_table = pd.DataFrame(index=EVENTS, columns=range(max(num_slots.values())))
+
+    return team_a_table, team_b_table
+
 def assign_to_table(person, selected_event, team_table, team_counter):
-    for spot in ["Spot 1", "Spot 2"]:
-        if pd.isna(team_table.loc[selected_event, spot]):
-            team_table.loc[selected_event, spot] = person
-            st.sidebar.success(f"{person} assigned to {selected_event} in {spot} for the team.")
+    num_slots = team_table.shape[1]
+
+    for slot in range(num_slots):
+        if pd.isna(team_table.loc[selected_event, slot]):
+            team_table.loc[selected_event, slot] = person
+            st.sidebar.success(f"{person} assigned to {selected_event} in Slot {slot+1} for the team.")
             return
     st.sidebar.error(f"No available slots for {person} in {selected_event}.")
-
-    # Replace N/A with an empty string
     team_table.replace({pd.NA: ''}, inplace=True)
-
 
 def assign_to_team(person, target_team, selected_events):
     if target_team == "Team A" and st.session_state.team_a_counter < 15:
@@ -94,9 +98,10 @@ def remove_from_team():
     remove_person = st.sidebar.text_input("Enter the name of the person to remove:")
     if remove_person:
         for team_table in [st.session_state.team_a_table, st.session_state.team_b_table]:
-            for spot in ["Spot 1", "Spot 2"]:
-                if not pd.isna(team_table.loc[selected_event, spot]):
-                    team_table.loc[selected_event, spot] = ''
+            for spot in range(team_table.shape[1]):
+                if team_table.apply(lambda x: x == remove_person).any().any():
+                    team_table.replace({remove_person: ''}, inplace=True)
         st.sidebar.success(f"{remove_person} removed from both teams.")
+
 if __name__ == "__main__":
     main()
