@@ -6,6 +6,8 @@ EVENTS = ["Air trajectory", "ANP", "Astro", "Chem Lab", "Codes", "Detector", "Di
           "Scrambler", "Tower", "Wind Power", "WiDi", "Optics"]
 
 def main():
+    global team_a_counter, team_b_counter
+
     st.title("SciOly Team Builder")
 
     # Input section
