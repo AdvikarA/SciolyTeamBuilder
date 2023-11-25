@@ -49,7 +49,7 @@ def main():
 
     # Remove from Team
     if st.sidebar.button("Remove from Team"):
-        remove_from_team(selected_events, target_team)
+        remove_from_team(dragged_person, selected_events, target_team)
 
 def input_people_data():
     st.sidebar.subheader("Add People and Events")
@@ -94,19 +94,24 @@ def assign_to_team(person, target_team, selected_events):
             assign_to_table(person, eventss, st.session_state.team_b_table, st.session_state.team_b_counter)
         st.session_state.team_b_counter += 1
 
-def remove_from_team(selected_events, target_team):
-    remove_person = st.sidebar.text_input("Enter the name of the person to remove:")
-    if remove_person:
-        if target_team == "Team A" and st.session_state.team_a_counter < 15:
+def remove_from_team(dragged_person, selected_events, target_team):
+    if dragged_person:
+        if target_team == "Team A" and st.session_state.team_a_counter > 0:
             for eventss in selected_events:
-                assign_to_table("", eventss, st.session_state.team_a_table, st.session_state.team_a_counter)
-            st.session_state.team_a_counter -= 1
-        elif target_team == "Team B" and st.session_state.team_b_counter < 15:
+                for slot in range(st.session_state.team_a_table.shape[1]):
+                    if st.session_state.team_a_table.loc[eventss, slot] == dragged_person:
+                        st.session_state.team_a_table.loc[eventss, slot] = ''
+                        st.sidebar.success(f"{dragged_person} removed from {eventss} in Team A.")
+                        st.session_state.team_a_counter -= 1
+
+        elif target_team == "Team B" and st.session_state.team_b_counter > 0:
             for eventss in selected_events:
-                assign_to_table("", eventss, st.session_state.team_b_table, st.session_state.team_b_counter)
-            st.session_state.team_b_counter -= 1
-            
-        st.sidebar.success(f"{remove_person} removed from both teams.")
+                for slot in range(st.session_state.team_b_table.shape[1]):
+                    if st.session_state.team_b_table.loc[eventss, slot] == dragged_person:
+                        st.session_state.team_b_table.loc[eventss, slot] = ''
+                        st.sidebar.success(f"{dragged_person} removed from {eventss} in Team B.")
+                        st.session_state.team_b_counter -= 1
+
 
 if __name__ == "__main__":
     main()
