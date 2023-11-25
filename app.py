@@ -49,7 +49,7 @@ def main():
 
     # Remove from Team
     if st.sidebar.button("Remove from Team"):
-        remove_from_team()
+        remove_from_team(selected_events, target_team)
 
 def input_people_data():
     st.sidebar.subheader("Add People and Events")
@@ -94,13 +94,18 @@ def assign_to_team(person, target_team, selected_events):
             assign_to_table(person, eventss, st.session_state.team_b_table, st.session_state.team_b_counter)
         st.session_state.team_b_counter += 1
 
-def remove_from_team():
+def remove_from_team(selected_events, target_team):
     remove_person = st.sidebar.text_input("Enter the name of the person to remove:")
     if remove_person:
-        for team_table in [st.session_state.team_a_table, st.session_state.team_b_table]:
-            for spot in range(team_table.shape[1]):
-                if team_table.apply(lambda x: x == remove_person).any().any():
-                    team_table.replace({remove_person: ''}, inplace=True)
+        if target_team == "Team A" and st.session_state.team_a_counter < 15:
+            for eventss in selected_events:
+                assign_to_table("", eventss, st.session_state.team_a_table, st.session_state.team_a_counter)
+            st.session_state.team_a_counter -= 1
+        elif target_team == "Team B" and st.session_state.team_b_counter < 15:
+            for eventss in selected_events:
+                assign_to_table("", eventss, st.session_state.team_b_table, st.session_state.team_b_counter)
+            st.session_state.team_b_counter -= 1
+            
         st.sidebar.success(f"{remove_person} removed from both teams.")
 
 if __name__ == "__main__":
