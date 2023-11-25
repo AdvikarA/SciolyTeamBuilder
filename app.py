@@ -12,16 +12,19 @@ def main():
     st.sidebar.header("Input People and Events")
     people_data = input_people_data()
 
-    # Team A and Team B tables
-    team_a_table, team_b_table = initialize_tables()
+    # Initialize tables if not already in session state
+    if 'team_a_table' not in st.session_state:
+        st.session_state.team_a_table, st.session_state.team_b_table = initialize_tables()
 
     # Team counters
     team_a_counter, team_b_counter = initialize_counters()
 
     # Display tables
     st.header("Team A")
+    st.table(st.session_state.team_a_table)
 
     st.header("Team B")
+    st.table(st.session_state.team_b_table)
 
     # Display counters
     st.sidebar.header("Team Counters")
@@ -31,14 +34,11 @@ def main():
     # Drag and Drop
     dragged_person = st.sidebar.selectbox("Drag a person to a team:", [""] + list(people_data.keys()))
     target_team = st.sidebar.selectbox("Select Team:", ["", "Team A", "Team B"])
-          
-    if dragged_person:
-        selected_events = st.sidebar.multiselect("Select Events:", [""] + people_data[dragged_person])
-          
+    selected_events = st.sidebar.multiselect("Select Events:", [""] + EVENTS)
+
     if st.sidebar.button("Assign to Team"):
         if dragged_person and target_team and selected_events:
-          assign_to_team(dragged_person, target_team, selected_events, team_a_table, team_b_table, team_a_counter, team_b_counter, people_data)
-
+            assign_to_team(dragged_person, target_team, selected_events, people_data)
 
 def input_people_data():
     st.sidebar.subheader("Add People and Events")
@@ -65,24 +65,28 @@ def initialize_tables():
 def initialize_counters():
     return 0, 0
 
-def assign_to_table(person, selected_event, team_table, team_counter, people_data):
+def assign_to_table(person, selected_event, people_data):
+    target_team_table = st.session_state.team_a_table if target_team == "Team A" else st.session_state.team_b_table
+
     for spot in ["Spot 1", "Spot 2"]:
-        if pd.isna(team_table.loc[selected_event, spot]):
-            team_table.loc[selected_event, spot] = person
-            table_slot = st.empty()
-            table_slot.table(team_table)
+        if pd.isna(target_team_table.loc[selected_event, spot]):
+            target_team_table.loc[selected_event, spot] = person
             st.sidebar.success(f"{person} assigned to {selected_event} in {spot} for the team.")
+            
+            # Update the table in the session state
+            st.session_state.team_a_table if target_team == "Team A" else st.session_state.team_b_table = target_team_table
+            
             return
     st.sidebar.error(f"No available slots for {person} in {selected_event}.")
 
-def assign_to_team(person, target_team, selected_events, team_a_table, team_b_table, team_a_counter, team_b_counter, people_data):
+def assign_to_team(person, target_team, selected_events, people_data):
     if target_team == "Team A" and team_a_counter < 15:
         for eventss in selected_events:      
-            assign_to_table(person, eventss, team_a_table, team_a_counter, people_data)
+            assign_to_table(person, eventss, people_data)
         team_a_counter += 1
     elif target_team == "Team B" and team_b_counter < 15:
         for eventss in selected_events:      
-            assign_to_table(person, eventss, team_b_table, team_b_counter, people_data)
+            assign_to_table(person, eventss, people_data)
         team_b_counter += 1
 
 
