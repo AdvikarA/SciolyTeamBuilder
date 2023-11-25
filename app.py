@@ -100,7 +100,7 @@ def remove_from_team(dragged_person, selected_events, target_team):
             for eventss in selected_events:
                 for slot in range(st.session_state.team_a_table.shape[1]):
                     if st.session_state.team_a_table.loc[eventss, slot] == dragged_person:
-                        st.session_state.team_a_table.loc[eventss, slot] = ''
+                        st.session_state.team_a_table.loc[eventss, slot] = pd.NA
                         st.sidebar.success(f"{dragged_person} removed from {eventss} in Team A.")
                         st.session_state.team_a_counter -= 1
 
@@ -108,9 +108,10 @@ def remove_from_team(dragged_person, selected_events, target_team):
             for eventss in selected_events:
                 for slot in range(st.session_state.team_b_table.shape[1]):
                     if st.session_state.team_b_table.loc[eventss, slot] == dragged_person:
-                        st.session_state.team_b_table.loc[eventss, slot] = ''
+                        st.session_state.team_b_table.loc[eventss, slot] = pd.NA
                         st.sidebar.success(f"{dragged_person} removed from {eventss} in Team B.")
                         st.session_state.team_b_counter -= 1
+
 
 
 if __name__ == "__main__":
