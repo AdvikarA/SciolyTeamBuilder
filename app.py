@@ -5,18 +5,20 @@ EVENTS = ["Air trajectory", "ANP", "Astro", "Chem Lab", "Codes", "Detector", "Di
           "Expdes", "Fermi", "Flight", "4n6", "Forestry", "Fossils", "Geomapping", "Microbe", "Robot Tour",
           "Scrambler", "Tower", "Wind Power", "WiDi", "Optics"]
 
+# Initialize tables outside of the main function
+team_a_table, team_b_table = initialize_tables()
+
+# Initialize counters
+team_a_counter, team_b_counter = initialize_counters()
+
 def main():
+    global team_a_table, team_b_table, team_a_counter, team_b_counter
+
     st.title("SciOly Team Builder")
 
     # Input section
     st.sidebar.header("Input People and Events")
     people_data = input_people_data()
-
-    # Team A and Team B tables
-    team_a_table, team_b_table = initialize_tables()
-
-    # Team counters
-    team_a_counter, team_b_counter = initialize_counters()
 
     # Display tables
     st.header("Team A")
@@ -40,7 +42,6 @@ def main():
     if st.sidebar.button("Assign to Team"):
         if dragged_person and target_team and selected_events:
           assign_to_team(dragged_person, target_team, selected_events, team_a_table, team_b_table, team_a_counter, team_b_counter, people_data)
-
 
 def input_people_data():
     st.sidebar.subheader("Add People and Events")
@@ -78,6 +79,8 @@ def assign_to_table(person, selected_event, team_table, team_counter, people_dat
     st.sidebar.error(f"No available slots for {person} in {selected_event}.")
 
 def assign_to_team(person, target_team, selected_events, team_a_table, team_b_table, team_a_counter, team_b_counter, people_data):
+    global team_a_counter, team_b_counter
+    
     if target_team == "Team A" and team_a_counter < 15:
         for eventss in selected_events:      
             assign_to_table(person, eventss, team_a_table, team_a_counter, people_data)
@@ -86,7 +89,6 @@ def assign_to_team(person, target_team, selected_events, team_a_table, team_b_ta
         for eventss in selected_events:      
             assign_to_table(person, eventss, team_b_table, team_b_counter, people_data)
         team_b_counter += 1
-
 
 if __name__ == "__main__":
     main()
