@@ -68,40 +68,27 @@ def input_people_data():
         events = st.sidebar.multiselect(f"Events for {person_name}:", EVENTS)
         st.session_state.people_data[person_name] = events
 
-def assign_to_table(person, selected_event, team_table, team_counter, people_data):
-    if person not in people_data:
-        people_data[person] = set()
-
-    if selected_event in people_data[person]:
-        st.sidebar.error(f"{person} is already assigned to {selected_event}.")
-        return
-
+def assign_to_table(person, selected_event, team_table, team_counter):
     for spot in ["Spot 1", "Spot 2"]:
         if pd.isna(team_table.loc[selected_event, spot]):
             team_table.loc[selected_event, spot] = person
-            people_data[person].add(selected_event)
-            update_assigned_events(person, selected_event, people_data)
-            table_slot = st.empty()
-            table_slot.table(team_table)
             st.sidebar.success(f"{person} assigned to {selected_event} in {spot} for the team.")
             return
     st.sidebar.error(f"No available slots for {person} in {selected_event}.")
 
+    # Replace N/A with an empty string
+    team_table.replace({pd.NA: ''}, inplace=True)
 
-def update_assigned_events(person, selected_event, people_data):
-    if person in people_data:
-        people_data[person].remove(selected_event)
 
 def assign_to_team(person, target_team, selected_events):
     if target_team == "Team A" and st.session_state.team_a_counter < 15:
-        for eventss in selected_events:      
-            assign_to_table(person, eventss, st.session_state.team_a_table, st.session_state.team_a_counter, st.session_state.people_data)
+        for eventss in selected_events:
+            assign_to_table(person, eventss, st.session_state.team_a_table, st.session_state.team_a_counter)
         st.session_state.team_a_counter += 1
     elif target_team == "Team B" and st.session_state.team_b_counter < 15:
-        for eventss in selected_events:      
-            assign_to_table(person, eventss, st.session_state.team_b_table, st.session_state.team_b_counter, st.session_state.people_data)
+        for eventss in selected_events:
+            assign_to_table(person, eventss, st.session_state.team_b_table, st.session_state.team_b_counter)
         st.session_state.team_b_counter += 1
-
 
 def remove_from_team():
     remove_person = st.sidebar.text_input("Enter the name of the person to remove:")
