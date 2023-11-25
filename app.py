@@ -1,6 +1,10 @@
 import streamlit as st
 import pandas as pd
 
+EVENTS = ["Air trajectory", "ANP", "Astro", "Chem Lab", "Codes", "Detector", "Disease", "DP", "Ecology",
+          "Expdes", "Fermi", "Flight", "4n6", "Forestry", "Fossils", "Geomapping", "Microbe", "Robot Tour",
+          "Scrambler", "Tower", "Wind Power", "WiDi", "Optics"]
+
 def main():
     st.title("SciOly Team Builder")
 
