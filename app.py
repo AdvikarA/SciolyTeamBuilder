@@ -74,13 +74,14 @@ def assign_to_table(person, selected_event, team_table, team_counter, people_dat
 
 def assign_to_team(person, target_team, selected_events, team_a_table, team_b_table, team_a_counter, team_b_counter, people_data):
     if target_team == "Team A" and team_a_counter < 15:
-        for (eventss in selected_events):      
-                  assign_to_table(person, eventss, team_a_table, team_a_counter, people_data)
+        for eventss in selected_events:      
+            assign_to_table(person, eventss, team_a_table, team_a_counter, people_data)
         team_a_counter += 1
     elif target_team == "Team B" and team_b_counter < 15:
-        for (eventss in selected_events):      
-                  assign_to_table(person, eventss, team_b_table, team_b_counter, people_data)
+        for eventss in selected_events:      
+            assign_to_table(person, eventss, team_b_table, team_b_counter, people_data)
         team_b_counter += 1
+
 
 if __name__ == "__main__":
     main()
