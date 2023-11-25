@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import streamlit.components.v1 as components
 
 EVENTS = ["Air trajectory", "ANP", "Astro", "Chem Lab", "Codes", "Detector", "Disease", "DP", "Ecology",
           "Expdes", "Fermi", "Flight", "4n6", "Forestry", "Fossils", "Geomapping", "Microbe", "Robot Tour",
@@ -29,10 +30,10 @@ def main():
 
     # Display tables
     st.header("Team A")
-    st.table(st.session_state.team_a_table)
+    display_table(st.session_state.team_a_table, "Team A")
 
     st.header("Team B")
-    st.table(st.session_state.team_b_table)
+    display_table(st.session_state.team_b_table, "Team B")
 
     # Display counters
     st.sidebar.header("Team Counters")
@@ -81,6 +82,33 @@ def assign_to_team(person, target_team, selected_events):
         for eventss in selected_events:
             assign_to_table(person, eventss, st.session_state.team_b_table, st.session_state.team_b_counter)
         st.session_state.team_b_counter += 1
+
+def display_table(team_table, team_name):
+    table_html = generate_table_html(team_table, team_name)
+    components.html(table_html, height=400, scrolling=True)
+
+def generate_table_html(team_table, team_name):
+    table_style = f"""
+        <style>
+            table {{
+                font-size: 14px;
+                border-collapse: collapse;
+                width: 100%;
+                margin-bottom: 20px;
+            }}
+            th, td {{
+                padding: 10px;
+                text-align: center;
+                border: 1px solid #dddddd;
+            }}
+            th {{
+                background-color: #f2f2f2;
+            }}
+        </style>
+    """
+    table_html = team_table.to_html(classes='table')
+    table_html = table_html.replace('<table border="1" class="dataframe table">', f'<table class="table">{table_style}')
+    return f"<h3>{team_name}</h3>{table_html}"
 
 if __name__ == "__main__":
     main()
