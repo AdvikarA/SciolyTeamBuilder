@@ -20,10 +20,8 @@ def main():
 
     # Display tables
     st.header("Team A")
-    st.table(team_a_table)
 
     st.header("Team B")
-    st.table(team_b_table)
 
     # Display counters
     st.sidebar.header("Team Counters")
