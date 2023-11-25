@@ -80,11 +80,6 @@ def initialize_tables():
 def assign_to_table(person, selected_event, team_table, team_counter):
     num_slots = team_table.shape[1]
 
-    # Check if there are already two people assigned
-    if num_slots == 2 and not team_table.loc[selected_event].isna().any() and selected_event not in ["Expdes", "Codes"]:
-        st.sidebar.error(f"Cannot assign more than two people to {selected_event}.")
-        return
-
     for slot in range(num_slots):
         if pd.isna(team_table.loc[selected_event, slot]):
             team_table.loc[selected_event, slot] = person
@@ -93,28 +88,15 @@ def assign_to_table(person, selected_event, team_table, team_counter):
     st.sidebar.error(f"No available slots for {person} in {selected_event}.")
     team_table.replace({pd.NA: ''}, inplace=True)
 
-
 def assign_to_team(person, target_team, selected_events):
-    for eventss in selected_events:
-        if (
-            (eventss not in ["Expdes", "Codes"])
-            and (st.session_state.team_a_table[eventss].apply(lambda x: not pd.isna(x)).sum() == 2)
-        ):
-            st.sidebar.error(f"Cannot assign more than two people to {eventss}.")
-            continue
-
-        assign_to_table(
-            person,
-            eventss,
-            st.session_state.team_a_table if target_team == "Team A" else st.session_state.team_b_table,
-            st.session_state.team_a_counter if target_team == "Team A" else st.session_state.team_b_counter,
-        )
-
-        if target_team == "Team A":
-            st.session_state.team_a_counter += 1
-        else:
-            st.session_state.team_b_counter += 1
-
+    if target_team == "Team A" and st.session_state.team_a_counter < 15:
+        for eventss in selected_events:
+            assign_to_table(person, eventss, st.session_state.team_a_table, st.session_state.team_a_counter)
+        st.session_state.team_a_counter += 1
+    elif target_team == "Team B" and st.session_state.team_b_counter < 15:
+        for eventss in selected_events:
+            assign_to_table(person, eventss, st.session_state.team_b_table, st.session_state.team_b_counter)
+        st.session_state.team_b_counter += 1
 
 def remove_from_team(dragged_person, selected_events, target_team):
     if dragged_person:
