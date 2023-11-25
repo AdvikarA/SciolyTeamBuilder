@@ -95,7 +95,8 @@ def remove_from_team():
     if remove_person:
         for team_table in [st.session_state.team_a_table, st.session_state.team_b_table]:
             for spot in ["Spot 1", "Spot 2"]:
-                team_table.replace({remove_person: ''}, inplace=True)
+            if !pd.isna(team_table.loc[selected_event, spot]):
+                team_table.loc[selected_event, spot] = ''
         st.sidebar.success(f"{remove_person} removed from both teams.")
 
 if __name__ == "__main__":
