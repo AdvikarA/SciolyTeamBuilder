@@ -80,6 +80,11 @@ def initialize_tables():
 def assign_to_table(person, selected_event, team_table, team_counter):
     num_slots = team_table.shape[1]
 
+    # Check if there are already two people assigned
+    if num_slots == 2 and not team_table.loc[selected_event].isna().any() and selected_event not in ["Expdes", "Codes"]:
+        st.sidebar.error(f"Cannot assign more than two people to {selected_event}.")
+        return
+
     for slot in range(num_slots):
         if pd.isna(team_table.loc[selected_event, slot]):
             team_table.loc[selected_event, slot] = person
@@ -87,6 +92,7 @@ def assign_to_table(person, selected_event, team_table, team_counter):
             return
     st.sidebar.error(f"No available slots for {person} in {selected_event}.")
     team_table.replace({pd.NA: ''}, inplace=True)
+
 
 def assign_to_team(person, target_team, selected_events):
     if target_team == "Team A" and st.session_state.team_a_counter < 15:
