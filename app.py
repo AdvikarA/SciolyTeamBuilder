@@ -91,24 +91,30 @@ def generate_table_html(team_table, team_name):
     table_style = f"""
         <style>
             table {{
-                font-size: 14px;
+                font-size: 16px;
                 border-collapse: collapse;
                 width: 100%;
                 margin-bottom: 20px;
+                overflow: hidden;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                border-radius: 5px;
+                background-color: #f8f9fa;
             }}
             th, td {{
-                padding: 10px;
+                padding: 15px;
                 text-align: center;
-                border: 1px solid #dddddd;
+                border: 1px solid #dee2e6;
+                background-color: #ffffff;
             }}
             th {{
-                background-color: #f2f2f2;
+                background-color: #343a40;
+                color: #ffffff;
             }}
         </style>
     """
     table_html = team_table.to_html(classes='table')
     table_html = table_html.replace('<table border="1" class="dataframe table">', f'<table class="table">{table_style}')
-    return f"<h3>{team_name}</h3>{table_html}"
+    return f"<h3 style='color: #343a40;'>{team_name}</h3>{table_html}"
 
 if __name__ == "__main__":
     main()
