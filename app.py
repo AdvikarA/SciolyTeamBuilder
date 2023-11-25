@@ -87,17 +87,16 @@ def update_assigned_events(person, selected_event, people_data):
     if person in people_data:
         people_data[person].remove(selected_event)
 
-
-
 def assign_to_team(person, target_team, selected_events):
     if target_team == "Team A" and st.session_state.team_a_counter < 15:
-        for eventss in selected_events:
-            assign_to_table(person, eventss, st.session_state.team_a_table, st.session_state.team_a_counter)
+        for eventss in selected_events:      
+            assign_to_table(person, eventss, st.session_state.team_a_table, st.session_state.team_a_counter, st.session_state.people_data)
         st.session_state.team_a_counter += 1
     elif target_team == "Team B" and st.session_state.team_b_counter < 15:
-        for eventss in selected_events:
-            assign_to_table(person, eventss, st.session_state.team_b_table, st.session_state.team_b_counter)
+        for eventss in selected_events:      
+            assign_to_table(person, eventss, st.session_state.team_b_table, st.session_state.team_b_counter, st.session_state.people_data)
         st.session_state.team_b_counter += 1
+
 
 def remove_from_team():
     remove_person = st.sidebar.text_input("Enter the name of the person to remove:")
