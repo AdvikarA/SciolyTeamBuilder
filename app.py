@@ -33,11 +33,11 @@ def main():
     # Drag and Drop
     dragged_person = st.sidebar.selectbox("Drag a person to a team:", [""] + list(people_data.keys()))
     target_team = st.sidebar.selectbox("Select Team:", ["", "Team A", "Team B"])
-    selected_event = st.sidebar.selectbox("Select Event:", [""] + EVENTS)
+    selected_events = st.sidebar.multiselect("Select Event:", [""] + EVENTS)
 
     if st.sidebar.button("Assign to Team"):
-        if dragged_person and target_team and selected_event:
-            assign_to_team(dragged_person, target_team, selected_event, team_a_table, team_b_table, team_a_counter, team_b_counter, people_data)
+        if dragged_person and target_team and selected_events:
+            assign_to_team(dragged_person, target_team, selected_events, team_a_table, team_b_table, team_a_counter, team_b_counter, people_data)
 
 def input_people_data():
     st.sidebar.subheader("Add People and Events")
@@ -64,20 +64,22 @@ def initialize_tables():
 def initialize_counters():
     return 0, 0
 
-def assign_to_team(person, target_team, selected_event, team_a_table, team_b_table, team_a_counter, team_b_counter, people_data):
+def assign_to_table(person, selected_events, team_table, team_counter, people_data):
+    for event in selected_events:
+        if team_table.loc[team_counter, event] is pd.NA:
+            team_table.loc[team_counter, event] = person
+            st.sidebar.success(f"{person} assigned to {event} in the team.")
+            break
+    else:
+        st.sidebar.error(f"No available slots for {person} in the selected events.")
+
+def assign_to_team(person, target_team, selected_events, team_a_table, team_b_table, team_a_counter, team_b_counter, people_data):
     if target_team == "Team A" and team_a_counter < 15:
-        assign_to_table(person, selected_event, team_a_table, team_a_counter, people_data)
+        assign_to_table(person, selected_events, team_a_table, team_a_counter, people_data)
         team_a_counter += 1
     elif target_team == "Team B" and team_b_counter < 15:
-        assign_to_table(person, selected_event, team_b_table, team_b_counter, people_data)
+        assign_to_table(person, selected_events, team_b_table, team_b_counter, people_data)
         team_b_counter += 1
-
-def assign_to_table(person, selected_event, team_table, team_counter, people_data):
-    event_index = EVENTS.index(selected_event)
-    team_table.loc[team_counter * 2, selected_event] = person
-    team_table.loc[team_counter * 2 + 1, selected_event] = f"({people_data[person][event_index]})"
-    if people_data[person][event_index] != "Assigned":
-        people_data[person][event_index] = "Assigned"
 
 if __name__ == "__main__":
     main()
