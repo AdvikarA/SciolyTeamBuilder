@@ -42,13 +42,17 @@ def main():
     # Drag and Drop
     dragged_person = st.sidebar.selectbox("Drag a person to a team:", [""] + list(st.session_state.people_data.keys()))
     target_team = st.sidebar.selectbox("Select Team:", ["", "Team A", "Team B"])
-    
+
     if dragged_person:
         selected_events = st.sidebar.multiselect("Select Events:", [""] + st.session_state.people_data[dragged_person])
 
     if st.sidebar.button("Assign to Team"):
         if dragged_person and target_team and selected_events:
             assign_to_team(dragged_person, target_team, selected_events)
+
+    # Remove from Team
+    if st.sidebar.button("Remove from Team"):
+        remove_from_team()
 
 def input_people_data():
     st.sidebar.subheader("Add People and Events")
@@ -81,6 +85,14 @@ def assign_to_team(person, target_team, selected_events):
         for eventss in selected_events:
             assign_to_table(person, eventss, st.session_state.team_b_table, st.session_state.team_b_counter)
         st.session_state.team_b_counter += 1
+
+def remove_from_team():
+    remove_person = st.sidebar.text_input("Enter the name of the person to remove:")
+    if remove_person:
+        for team_table in [st.session_state.team_a_table, st.session_state.team_b_table]:
+            for spot in ["Spot 1", "Spot 2"]:
+                team_table.replace({remove_person: pd.NA}, inplace=True)
+        st.sidebar.success(f"{remove_person} removed from both teams.")
 
 if __name__ == "__main__":
     main()
