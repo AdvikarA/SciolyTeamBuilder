@@ -51,14 +51,14 @@ def input_people_data():
         if not person_name:
             break
 
-        events = st.sidebar.text_input(f"Events for {person_name} (comma-separated):").split(",")
-        people_data[person_name] = [event.strip() for event in events]
+        events = st.sidebar.multiselect(f"Events for {person_name}:", EVENTS)
+        people_data[person_name] = events
 
     return people_data
 
 def initialize_tables():
-    team_a_table = pd.DataFrame(index=range(48), columns=["Slot 1", "Slot 2"])
-    team_b_table = pd.DataFrame(index=range(48), columns=["Slot 1", "Slot 2"])
+    team_a_table = pd.DataFrame(index=range(len(EVENTS) * 2), columns=EVENTS)
+    team_b_table = pd.DataFrame(index=range(len(EVENTS) * 2), columns=EVENTS)
     return team_a_table, team_b_table
 
 def initialize_counters():
@@ -73,13 +73,8 @@ def assign_to_team(person, target_team, selected_event, team_a_table, team_b_tab
         team_b_counter += 1
 
 def assign_to_table(person, selected_event, team_table, team_counter, people_data):
-    for i in range(2):
-        if team_table.iloc[team_counter * 2 + i, 0] == "":
-            team_table.iloc[team_counter * 2 + i, 0] = f"{person} ({selected_event})"
-            break
-        elif team_table.iloc[team_counter * 2 + i, 1] == "":
-            team_table.iloc[team_counter * 2 + i, 1] = f"{person} ({selected_event})"
-            break
+    team_table.loc[team_counter * 2, selected_event] = person
+    team_table.loc[team_counter * 2 + 1, selected_event] = person
 
 if __name__ == "__main__":
     main()
