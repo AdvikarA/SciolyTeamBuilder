@@ -33,11 +33,14 @@ def main():
     # Drag and Drop
     dragged_person = st.sidebar.selectbox("Drag a person to a team:", [""] + list(people_data.keys()))
     target_team = st.sidebar.selectbox("Select Team:", ["", "Team A", "Team B"])
-    selected_event = st.sidebar.multiselect("Select Events:", [""] + events)
-
+          
+    if dragged_person:
+        selected_events = st.sidebar.multiselect("Select Events:", [""] + people_data[dragged_person])
+          
     if st.sidebar.button("Assign to Team"):
         if dragged_person and target_team and selected_events:
-            assign_to_team(dragged_person, target_team, selected_events, team_a_table, team_b_table, team_a_counter, team_b_counter, people_data)
+          assign_to_team(dragged_person, target_team, selected_events, team_a_table, team_b_table, team_a_counter, team_b_counter, people_data)
+
 
 def input_people_data():
     st.sidebar.subheader("Add People and Events")
