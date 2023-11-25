@@ -78,9 +78,7 @@ def assign_to_table(person, selected_event, team_table, team_counter, people_dat
             return
     st.sidebar.error(f"No available slots for {person} in {selected_event}.")
 
-def assign_to_team(person, target_team, selected_events, team_a_table, team_b_table, team_a_counter, team_b_counter, people_data):
-    global team_a_counter, team_b_counter
-    
+def assign_to_team(person, target_team, selected_events, team_a_table, team_b_table, people_data):
     if target_team == "Team A" and team_a_counter < 15:
         for eventss in selected_events:      
             assign_to_table(person, eventss, team_a_table, team_a_counter, people_data)
